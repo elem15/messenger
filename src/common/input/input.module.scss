@@ -39,7 +39,6 @@
 
   display: flex;
   flex-direction: column;
-  margin: 5px 0;
 
   .inputContainer {
     position: relative;
@@ -78,6 +77,15 @@
       background-color: var(--color-dark-700) !important ;
       border: var(--color-dark-100) solid 1px;
       border-radius: 2px;
+
+      &[type='text'] {
+        border: none;
+        background-color: black !important;
+
+        &:active {
+          border: none;
+        }
+      }
 
       &[type='search'] {
         width: calc(100% - 55px);

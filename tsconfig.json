@@ -29,7 +29,9 @@
   "include": [
     "src",
     "**/*.ts",
-    "**/*.tsx", "config-overrides.js",
+    "**/*.tsx",
+    "src.types/**/*.ts",
+    "config-overrides.js",
   ],
   "exclude": [
     "node_modules"

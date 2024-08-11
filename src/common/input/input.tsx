@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onChange,
       label,
       labelClass,
-      type,
+      type = 'text',
       ...restProps
     },
     ref
@@ -45,7 +45,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div className={s.inputWrapper}>
+      <div className={clsx(s.inputWrapper, restProps.className)}>
         <label className={clsx(s.label, labelClass && s[labelClass])}>{label}</label>
 
         <div className={s.inputContainer}>
@@ -61,7 +61,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             ref={ref}
             value={value}
-            {...restProps}
           />
           {type === 'password' && (
             <button

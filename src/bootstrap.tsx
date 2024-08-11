@@ -1,17 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Messenger from "./components/Messenger";
+import Messenger from './components/Messanger';
 import { Provider } from 'react-redux';
-import store from './api/appStore';
+import store from './app/api/appStore';
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
+import ru from 'javascript-time-ago/locale/ru.json'
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+TimeAgo.addLocale(en)
+TimeAgo.addLocale(ru)
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-       <Messenger />  
+      <Messenger />
     </Provider>
   </React.StrictMode>
 );

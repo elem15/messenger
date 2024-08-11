@@ -1,0 +1,53 @@
+.container {
+  height: 100%;
+  border: 1px solid #4c4c4c;
+  box-sizing: border-box;
+}
+.header {
+  display: flex;
+  background-color: #171717;
+} 
+
+.boxContent {
+  display: flex;
+  height: calc(100vh - 96.6px);
+  border-top: 1px solid #4c4c4c;
+}
+
+.searchBox {
+  width: 270px;
+  height: -webkit-fill-available;
+  padding: 10px 7px;
+  border-right: 1px Solid #4c4c4c;
+}
+
+.currentUser {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.searchinp {
+  border: 1px solid #4c4c4c;
+}
+
+.usersList {
+  width: 328px;
+  flex-grow: 1;
+  border-right: 1px Solid #4c4c4c;
+  background-color: #171717;
+  .userBlock:last-child {
+    border-bottom: none;
+  }
+}
+
+.boxDialogs {
+  width: 100%;
+  height: calc(100vh - 135.6px);
+}
+
+.dialogs {
+  height: 100%;
+}
+
