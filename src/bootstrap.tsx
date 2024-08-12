@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import Messenger from './components/Messanger';
 import { Provider } from 'react-redux';
@@ -14,8 +15,10 @@ TimeAgo.addLocale(ru)
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <Messenger />
-    </Provider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <Messenger />
+      </Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );

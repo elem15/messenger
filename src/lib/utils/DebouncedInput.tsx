@@ -4,6 +4,8 @@ import { Input } from '../../common/input/input';
 
 type Props = {
   callback: (value: string) => void;
+  clearSearch?: '' | null
+  setClearSearch: (val: '' | null) => void
 } & Omit<ComponentPropsWithoutRef<'input'>, 'onChange'>;
 
 const DebouncedInput = ({ callback, ...rest }: Props) => {
@@ -11,6 +13,7 @@ const DebouncedInput = ({ callback, ...rest }: Props) => {
   const [valueInput, setValueInput] = useState<string>('');
 
   useEffect(() => {
+    rest.clearSearch === '' && setValueInput('')
     const debounceTimeout = setTimeout(() => {
       if (debouncedValue !== null) {
         callback(debouncedValue);
@@ -18,8 +21,11 @@ const DebouncedInput = ({ callback, ...rest }: Props) => {
       }
     }, 500);
 
-    return () => clearTimeout(debounceTimeout);
-  }, [debouncedValue, callback]);
+    return () => {
+      clearTimeout(debounceTimeout)
+      rest.setClearSearch(null)
+    };
+  }, [debouncedValue, callback, rest.clearSearch]);
 
   const handleInputChange = (e: string) => {
     setValueInput(e);

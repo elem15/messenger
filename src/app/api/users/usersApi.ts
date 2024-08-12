@@ -20,13 +20,27 @@ export const usersApi = createApi({
       }),
       transformResponse: (res: ISearchUsers): IUser[] => {
         return res.items.map(item => {
-          console.log(item)
           return {id: item.id, firstName: item.firstName, lastName: item.lastName, avatars: item.avatars}
         })
       },
       providesTags: ['Users'],
     }),
+    getUserName: builder.query<
+    UserName,
+      { name: string | null; accessToken: string | undefined }
+    >({
+      query: ({ name, accessToken }) => ({
+        method: 'GET',
+        url: `/users/${name}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
+        },
+      }),
+      transformResponse: (res: UserName) => ({firstName: res.firstName, lastName: res.lastName}),
+      providesTags: ['Users'],
+    }),
   }),
 })
 
-export const { useGetUsersNameQuery } = usersApi
+export const { useGetUsersNameQuery, useGetUserNameQuery } = usersApi

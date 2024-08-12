@@ -2,7 +2,7 @@ import { Typography } from '../common/typography/typography';
 import DebouncedInput from '../lib/utils/DebouncedInput';
 import { useEffect, useState } from 'react';
 import s from './Messanger.module.scss';
-import { useGetMessengerQuery } from '../app/api/messanger/messangerApi';
+import { useGetMessengerByIdQuery, useGetMessengerQuery } from '../app/api/messanger/messangerApi';
 import { Footer } from './footer/Footer';
 import { SocketApi } from '../app/api/socket/socket-api';
 import { Users } from './users/Users';
@@ -11,6 +11,10 @@ import { useGetUsersNameQuery } from '@/app/api/users/usersApi';
 import { SearchUserResults } from './users/SearchUserResults';
 import { AvatarSmallView } from '@/common/avatar';
 
+export type CurrentUser = {
+  avaUrl: string, 
+  name: {firstName: string, lastName: string}
+}
 const Messenger = () => {
   const accessToken = localStorage.getItem('token');
 
@@ -19,14 +23,16 @@ const Messenger = () => {
   const [messages, setMessages] = useState<IMessageType[]>([]);
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [isShowUsersFromSearch, setIsShowUsersFromSearch] = useState<boolean>(false)
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+  const [clearSearch, setClearSearch] = useState<'' | null>(null)
 
-  const { data } = useGetMessengerQuery({ searchName: valueSearch });
-  const { data: users, isLoading } = useGetUsersNameQuery({
-    name: valueSearch ? valueSearch : null,
-    accessToken: accessToken as string,
-  })
-  
-  console.dir(users)
+  const { data: dialogUsers } = useGetMessengerQuery({accessToken});
+  // const { data: searchedUsers } = useGetUsersNameQuery({
+  //   name: valueSearch ? valueSearch : '',
+  //   accessToken: accessToken as string,
+  // })
+
+  const { data } = useGetMessengerByIdQuery({accessToken, userId: 3})
 
   const onDebounce = (value: string) => {
     setValueSearch(value);
@@ -72,30 +78,53 @@ const Messenger = () => {
     };
   }, []);
 
+  console.log(messages)
+
   return (
     <>
       <Typography variant="h1">Messenger</Typography>
       <div className={s.container}>
         <div className={s.header}>
           <div className={s.searchBox}>
-            <DebouncedInput callback={onDebounce} />
+            <DebouncedInput setClearSearch={setClearSearch} clearSearch={clearSearch} callback={onDebounce} />
           </div>
-          <div className={s.currentUser}>
-          <AvatarSmallView className="h-fit" />
-          <Typography>User</Typography>
-          </div>
+          {currentUser && <div className={s.currentUser}>
+          <AvatarSmallView avatarOwner={currentUser?.avaUrl} className="h-fit" />
+          <Typography>{`${currentUser?.name.firstName } ${currentUser?.name.lastName}`}</Typography>
+          </div>}
         </div>
         <div className={s.boxContent}>
           <div className={s.usersList}>
             11
-            {isShowUsersFromSearch ? 
-              users && <SearchUserResults callback={setIsShowUsersFromSearch} users={users} />
-             :
-              data && <Users setReceiverId={setReceiverId} users={data.items} /> }
+            {
+              isShowUsersFromSearch ? 
+                <SearchUserResults 
+                  setClearSearch={setClearSearch} 
+                  setCurrentUser={setCurrentUser} 
+                  callback={setIsShowUsersFromSearch}
+                  valueSearch={valueSearch}
+                  // users={searchedUsers}
+                  setReceiverId={setReceiverId}
+                /> :
+              dialogUsers && <Users 
+                                setCurrentUser={setCurrentUser}  
+                                setReceiverId={setReceiverId} 
+                                users={dialogUsers.items} 
+                              /> 
+            }
           </div>
           <div className={s.boxDialogs}>
-            <div className={s.dialogs}>13123123123</div>
-            <Footer sendMessage={sendMessage} setMessageValue={setNewMessage} />
+            <div className={s.dialogs}>
+              {currentUser ? 
+                messages.map(msg => (<Typography>{msg.messageText}</Typography>)) :
+                <Typography className='flex items-center'>Выберите, кому хотели бы написать</Typography>
+                }
+            </div>
+            {currentUser && <Footer 
+                              clearSearch={clearSearch} 
+                              sendMessage={sendMessage} 
+                              setMessageValue={setNewMessage}
+                            />}
           </div>
         </div>
       </div>

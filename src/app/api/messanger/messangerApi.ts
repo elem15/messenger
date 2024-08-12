@@ -7,12 +7,24 @@ export const messangerApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ['messanger'],
   endpoints: (builder) => ({
-    getMessenger: builder.query<IMessageInfo, { searchName: string }>({
-      query: ({ searchName }) => {
-        const accessToken = localStorage.getItem('token');
+    getMessenger: builder.query<IMessageInfo, any>({
+      query: ({accessToken}) => {
         return {
           method: 'GET',
-          url: `/messanger?search=${searchName}`,
+          url: `/messanger`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + accessToken,
+          },
+          credentials: 'include',
+        };
+      },
+    }),
+    getMessengerById: builder.query<any, any>({
+      query: ({accessToken, userId}) => {
+        return {
+          method: 'GET',
+          url: `/messanger/${userId}`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + accessToken,
@@ -24,4 +36,4 @@ export const messangerApi = createApi({
   }),
 });
 
-export const { useGetMessengerQuery } = messangerApi;
+export const { useGetMessengerQuery, useGetMessengerByIdQuery } = messangerApi;

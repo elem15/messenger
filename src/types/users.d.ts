@@ -30,3 +30,5 @@ interface IUser {
   lastName: string;
   avatars: Avatar[];
 }
+
+type UserName = omit<IUser, 'id', 'avatars'>
