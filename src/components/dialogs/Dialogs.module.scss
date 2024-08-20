@@ -1,0 +1,18 @@
+.messageOwner {
+  padding: 5px 10px;
+  background-color: #234E99;
+  border-radius: 8px;
+  width: fit-content;
+  display: grid;
+  justify-items: end;
+  margin-right: 15px;
+
+  &:first-child {
+    margin-bottom: 3px;
+  }
+}
+
+// .change {
+//   align-content: normal;
+//   margin: 20% auto;
+// }

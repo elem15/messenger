@@ -1,0 +1,18 @@
+.userBlock {
+  display: flex;
+  gap: 13px;
+
+  padding: 7px;
+  width: 315px;
+  border-bottom: 1px solid #4c4c4c;
+  background-color: #171717;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #4c4c4c;
+  }
+}
+
+.colorMessageInfo {
+  color: #8D9094
+}

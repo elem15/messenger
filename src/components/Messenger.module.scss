@@ -1,0 +1,68 @@
+.container {
+  // height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border: 1px solid #4c4c4c;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.header {
+  display: flex;
+  background-color: #171717;
+} 
+
+.boxContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  // height: calc(100vh - 96.6px);
+  // height: 100%;
+  border-top: 1px solid #4c4c4c;
+}
+
+.searchBox {
+  width: 316px;
+  //height: -webkit-fill-available;
+  padding: 10px 7px;
+  border-right: 1px Solid #4c4c4c;
+}
+
+.currentUser {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.searchinp {
+  border: 1px solid #4c4c4c;
+}
+
+.usersList {
+  width: 328px;
+  // height: 100%;
+  border-right: 1px Solid #4c4c4c;
+  background-color: #171717;
+  .userBlock:last-child {
+    border-bottom: none;
+  }
+}
+
+.boxDialogs {
+  width: 100%;
+  display: grid;
+  justify-content: end;
+  justify-items: end;
+  overflow: hidden;
+}
+
+.dialogs {
+  height: 100%;
+}
+
+.change{
+  justify-content: space-evenly;
+  height: 50%;
+}
+
