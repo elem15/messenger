@@ -3,10 +3,10 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../baseQueryWithReauth';
 import { IMessageInfo, IMessageType } from '@/types/messanger';
 
-export const messangerApi = createApi({
-  reducerPath: 'messanger',
+export const messengerApi = createApi({
+  reducerPath: 'messenger-remote',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['messanger'],
+  tagTypes: ['messenger-remote'],
   endpoints: (builder) => ({
     getMessenger: builder.query<IMessageInfo, any>({
       query: ({accessToken}) => {
@@ -20,7 +20,7 @@ export const messangerApi = createApi({
           credentials: 'include',
         };
       },
-      providesTags: ['messanger'],
+      providesTags: ['messenger-remote'],
     }),
     getMessengerById: builder.query<IMessageType[], {accessToken: string | null, userId: number}>({
       query: ({accessToken, userId}) => {
@@ -37,9 +37,9 @@ export const messangerApi = createApi({
       transformResponse: (res: ResponseDialogsByUser): IMessageType[] => {
         return res.items.map((item: IMessageType) => item)
       },
-      providesTags: ['messanger'],
+      providesTags: ['messenger-remote'],
     }),
   }),
 });
 
-export const { useLazyGetMessengerQuery, useLazyGetMessengerByIdQuery } = messangerApi;
+export const { useLazyGetMessengerQuery, useLazyGetMessengerByIdQuery } = messengerApi;

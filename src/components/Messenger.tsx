@@ -2,7 +2,7 @@ import { Typography } from '@/common/typography/typography';
 import DebouncedInput from '../lib/utils/DebouncedInput';
 import { useEffect, useState } from 'react';
 import s from '@/components/Messenger.module.scss';
-import { useLazyGetMessengerByIdQuery, useLazyGetMessengerQuery } from '@/app/api/messanger/messangerApi';
+import { useLazyGetMessengerByIdQuery, useLazyGetMessengerQuery } from '@/app/api/messenger/messengerApi';
 import { Footer } from './footer/Footer';
 import { SocketApi } from '@/app/api/socket/socket-api';
 import { Users } from './users/Users';
@@ -10,8 +10,6 @@ import { IMessageType } from '@/types/messanger';
 import { SearchUserResults } from './users/SearchUserResults';
 import { AvatarSmallView } from '@/common/avatar';
 import { Dialogs } from './dialogs/Dialogs';
-import { Scroller } from '@/common/scroller/Scroller';
-import {clsx} from "clsx";
 
 export type CurrentUser = {
   userId: number
@@ -32,11 +30,16 @@ const Messenger = () => {
 
   const [ getUsers, {data: dialogUsers} ] = useLazyGetMessengerQuery();
 
-  const [getDialogsByUser, {data: dialogUser} ] = useLazyGetMessengerByIdQuery()
+  const [getDialogsByUser, {data: dialogUser, isFetching} ] = useLazyGetMessengerByIdQuery()
 
   const onDebounce = (value: string) => {
-    setValueSearch(value);
-    setIsShowUsersFromSearch(true)
+    if (value) {
+      setValueSearch(value);
+      setIsShowUsersFromSearch(true)
+    } else {
+      setIsFetchUser(false)
+      setIsShowUsersFromSearch(false)
+    }
   };
 
   function sendMessage() {
@@ -92,7 +95,7 @@ const Messenger = () => {
   }, []);
 
   return (
-      <div className='flex flex-col h-screen'>
+      <div className='flex flex-col h-full'>
         <Typography variant="h1">Messenger</Typography>
         <div className={s.container}>
           <div className={s.header}>
@@ -106,7 +109,6 @@ const Messenger = () => {
               </Typography>
             </div>}
           </div>
-          {/* <div className='flex-auto'> */}
           <div className={s.boxContent}>
             <div className={s.usersList}>
               {
@@ -127,12 +129,12 @@ const Messenger = () => {
                   />
               }
             </div>
-            <div className='flex flex-col justify-end w-full flex-auto'>
-              {/* <Scroller> */}
-              <div className={clsx(s.boxDialogs, !currentUser && s.change)}>
-                <Dialogs currentUser={currentUser} dialogUser={dialogUser}/>
+            <div className={s.containerDialogs}>
+              <div className={currentUser ? s.afterChange : s.change}>
+                {!isFetching ?
+                  <Dialogs currentUser={currentUser} dialogUser={dialogUser}/> :
+                  <Typography variant={'h1'} className={s.change}>Loading...</Typography>}
               </div>
-              {/* </Scroller> */}
               {currentUser && <Footer
                 clearSearch={clearSearch}
                 sendMessage={sendMessage}
@@ -140,8 +142,6 @@ const Messenger = () => {
               />}
             </div>
           </div>
-          {/* </div> */}
-
         </div>
       </div>
   );

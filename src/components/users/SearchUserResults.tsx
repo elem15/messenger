@@ -3,6 +3,7 @@ import { Typography } from "@/common/typography/typography"
 import { CurrentUser } from "src/components/Messenger"
 import { useGetUsersNameQuery } from "@/app/api/users/usersApi"
 import { Dispatch } from "react"
+import s from './UStyles.module.scss'
 
 type Props = {
   // users: IUser[]
@@ -22,9 +23,9 @@ export const SearchUserResults = ({
   setReceiverId}: Props
 ) => {
   const accessToken = localStorage.getItem('token');
-  
+
   const { data: users } = useGetUsersNameQuery({
-    name: valueSearch ? valueSearch : '',
+    name: valueSearch ? valueSearch : null,
     accessToken: accessToken as string,
   })
   
@@ -40,7 +41,7 @@ export const SearchUserResults = ({
       {users?.map(user => (
         <div
           key={user.id}
-          className="flex gap-3 p-[7px] w-[270px] border-r border-b border-[#4c4c4c] bg-[#171717] cursor-pointer hover:bg-[#4c4c4c]"
+          className={s.searchedUsers}
           onClick={() => onClickHandle(user.avatars[0]?.url, user.firstName, user.lastName, user.id) }
         >
           <AvatarSmallView avatarOwner={user.avatars[0]?.url} className="h-fit" />

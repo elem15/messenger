@@ -6,7 +6,7 @@ import { Typography } from '../typography/typography'
 
 import s from './input.module.scss'
 
-import { EyeOffOutline, EyeOutline, SearchIcon, IconLocation } from '../../assets/icons'
+import { EyeOffOutline, EyeOutline, SearchIcon, IconLocation } from '@/assets/icons'
 
 export type InputProps = {
   onChangeValue?: (value: string) => void

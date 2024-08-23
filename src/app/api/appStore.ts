@@ -1,15 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
-import { messangerApi } from './messanger/messangerApi';
+import { messengerApi } from '@/app/api/messenger/messengerApi';
 import { usersApi } from './users/usersApi';
 
 const store = configureStore({
   reducer: {
-    [messangerApi.reducerPath]: messangerApi.reducer,
+    [messengerApi.reducerPath]: messengerApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
-    messangerApi.middleware,
+    messengerApi.middleware,
     usersApi.middleware
   ),
 });

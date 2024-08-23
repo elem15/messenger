@@ -2,9 +2,9 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithReauth } from '../baseQueryWithReauth';
 
 export const usersApi = createApi({
-  reducerPath: 'users',
+  reducerPath: 'users-remote',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Users'],
+  tagTypes: ['Users-remote'],
   endpoints: builder => ({
     getUsersName: builder.query<
     IUser[],
@@ -23,7 +23,7 @@ export const usersApi = createApi({
           return {id: item.id, firstName: item.firstName, lastName: item.lastName, avatars: item.avatars}
         })
       },
-      providesTags: ['Users'],
+      providesTags: ['Users-remote'],
     }),
     getUserName: builder.query<
     UserName,
@@ -38,7 +38,7 @@ export const usersApi = createApi({
         },
       }),
       transformResponse: (res: UserName) => ({firstName: res.firstName, lastName: res.lastName}),
-      providesTags: ['Users'],
+      providesTags: ['Users-remote'],
     }),
   }),
 })

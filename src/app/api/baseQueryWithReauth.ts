@@ -30,8 +30,22 @@ export const baseQueryWithReauth: BaseQueryFn<
 
       localStorage.setItem('token', data.accessToken)
       result = await baseQuery(args, api, extraOptions)
+
+      const userResult = await baseQuery(
+        { url: '/auth/me', method: 'GET', headers: { 'Authorization': `Bearer ${data.accessToken}` } },
+        api,
+        extraOptions
+      )
+
+      if (userResult.data) {
+        const userData = userResult.data as { userId: string }
+
+        // Сохранение ID пользователя
+        localStorage.setItem('userId', userData.userId)
+      }
     } else {
       localStorage.removeItem('token')
+      localStorage.removeItem('userId')
     }
   }
 

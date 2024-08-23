@@ -3,8 +3,7 @@ import HtmlWebpackPlugin from  "html-webpack-plugin"
 import  webpack from "webpack"
 import { Configuration as DevServerConfiguration } from "webpack-dev-server"
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import { dependencies as deps } from './package.json'
-import {ModuleFederationPlugin} from "@module-federation/enhanced";
+const { ModuleFederationPlugin } = require('webpack').container;
 
 type Mode = "development" | "production"
 
@@ -32,53 +31,75 @@ export default (env: envVariables) => {
         filename: 'remoteEntry.js',
         exposes: {
           './MessengerBlock': './src/components/Messenger',
+          './usersRemoteApi': './src/app/api/users/usersApi.ts',
+          './messengerApi': './src/app/api/messenger/messengerApi.ts',
         },
         shared: {
-          ...deps,
           react: {
-            eager: true,
-            import: 'react',
-            shareKey: 'shared-react',
-            shareScope: 'default-react',
-            requiredVersion: deps.react,
             singleton: true,
+            version: '0',
+            requiredVersion: false,
           },
           'react-dom': {
-            eager: true,
-            import: 'react-dom',
-            shareKey: 'shared-react-dom',
-            shareScope: 'default-react-dom',
-            requiredVersion: deps['react-dom'],
+            requiredVersion: false,
             singleton: true,
+            version: '0',
           },
           'react-router-dom': {
-            eager: true,
-            import: 'react-router-dom',
-            shareKey: 'shared-react-router-dom',
-            shareScope: 'default-react-router-dom',
-            requiredVersion: deps['react-router-dom'],
+            requiredVersion: false,
             singleton: true,
+            version: '0',
           },
           'react-redux': {
-            import: 'react-redux',
-            shareKey: 'react-redux',
-            shareScope: 'default-react-redux',
-            requiredVersion: deps['react-redux'],
+            requiredVersion: false,
             singleton: true,
-          },
-          '@radix-ui/react-scroll-area': {
-            eager: true,
-            requiredVersion: deps["@radix-ui/react-scroll-area"],
-            singleton: true,
-          },
-          'react-time-ago': {
-            import: 'react-time-ago',
-            shareKey: 'react-time-ago',
-            shareScope: 'default-react-time-ago',
-            eager: true,
-            requiredVersion: deps["react-time-ago"],
-            singleton: true,
+            version: '0',
           }
+          // ...deps,
+          // react: {
+          //   eager: true,
+          //   import: 'react',
+          //   shareKey: 'shared-react',
+          //   shareScope: 'default-react',
+          //   requiredVersion: deps.react,
+          //   singleton: true,
+          // },
+          // 'react-dom': {
+          //   eager: true,
+          //   import: 'react-dom',
+          //   shareKey: 'shared-react-dom',
+          //   shareScope: 'default-react-dom',
+          //   requiredVersion: deps['react-dom'],
+          //   singleton: true,
+          // },
+          // 'react-router-dom': {
+          //   eager: true,
+          //   import: 'react-router-dom',
+          //   shareKey: 'shared-react-router-dom',
+          //   shareScope: 'default-react-router-dom',
+          //   requiredVersion: deps['react-router-dom'],
+          //   singleton: true,
+          // },
+          // 'react-redux': {
+          //   import: 'react-redux',
+          //   shareKey: 'react-redux',
+          //   shareScope: 'default-react-redux',
+          //   requiredVersion: deps['react-redux'],
+          //   singleton: true,
+          // },
+          // '@radix-ui/react-scroll-area': {
+          //   eager: true,
+          //   requiredVersion: deps["@radix-ui/react-scroll-area"],
+          //   singleton: true,
+          // },
+          // 'react-time-ago': {
+          //   import: 'react-time-ago',
+          //   shareKey: 'react-time-ago',
+          //   shareScope: 'default-react-time-ago',
+          //   eager: true,
+          //   requiredVersion: deps["react-time-ago"],
+          //   singleton: true,
+          // }
         },
       })
     ],

@@ -14,12 +14,14 @@ export type AvatarProps<T extends ElementType = 'img'> = {
 export const AvatarSmallView = ({
   avatarOwner,
   width = 36,
+  height = 36,
   className,
 }: AvatarProps) => {
   return (
     <img
       src={avatarOwner || SmileImg}
       width={width}
+      height={height}
       alt="Owner's avatar"
       className={clsx(s.smallAvatar, className)}
     />

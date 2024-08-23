@@ -1,4 +1,4 @@
-import { useTranslation } from '@/lib/hooks/useTranslation'
+// import { useTranslation } from '@/lib/hooks/useTranslation'
 import { AvatarSmallView } from '@/common/avatar'
 import { Typography } from '@/common/typography/typography'
 import s from './UStyles.module.scss'
@@ -6,7 +6,7 @@ import { TimeAgo } from '@/common/time-ago'
 import { Avatar } from '@/types/messanger'
 import { CurrentUser } from 'src/components/Messenger'
 import { useGetUserNameQuery } from '@/app/api/users/usersApi'
-import { Dispatch } from 'react'
+import {Dispatch, useEffect} from 'react'
 
 type Props = {
   receiverId: number
@@ -19,7 +19,7 @@ type Props = {
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
 }
 export const User = ({ receiverId, text, setIsFetchUser, userName, dateMessage, avatar, setReceiverId, setCurrentUser }: Props) => {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
   const accessToken = localStorage.getItem('token');
 
   const { data: user } = useGetUserNameQuery({
@@ -40,18 +40,31 @@ export const User = ({ receiverId, text, setIsFetchUser, userName, dateMessage, 
     })
   }
 
+  const setTextLength = (text: string) => {
+    if(text.length > 13) {
+      return text.slice(0, 13) + '...'
+    }
+    return text
+  }
+  const setNameLength = (text: string) => {
+    if(text?.length > 10) {
+      return text.slice(0, 1) + '.'
+    }
+    return text
+  }
+
   return (
     <div className={s.userBlock} onClick={onClickHandler} >
       <AvatarSmallView avatarOwner={avatar[0]?.url} className="h-fit" />
       <div>
         <div className="flex items-center justify-between w-[245px]">
-          <Typography>{`${user?.firstName || '...' } ${user?.lastName || '...'}`}</Typography>
+          <Typography>{`${user?.firstName || '...' } ${setNameLength(user?.lastName) || '...'}`}</Typography>
           <Typography className={s.colorMessageInfo} variant="small_text">
-            <TimeAgo lg={t.lg} updatedAt={dateMessage} />
+            {/*<TimeAgo lg={t.lg} updatedAt={dateMessage} />*/}
           </Typography>
         </div>
         <Typography className={s.colorMessageInfo} variant="small_text">
-          {text}
+          {setTextLength(text)}
         </Typography>
       </div>
     </div>

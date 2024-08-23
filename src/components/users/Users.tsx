@@ -1,5 +1,5 @@
 import { Dispatch } from "react"
-import { Items } from "../../types/messanger"
+import { Items } from "@/types/messanger"
 import { CurrentUser } from "src/components/Messenger"
 import { User } from "./User"
 import { Scroller } from "@/common/scroller/Scroller"
@@ -11,6 +11,8 @@ type Props = {
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
 }
 export const Users = ({ users, setReceiverId, setIsFetchUser, setCurrentUser }: Props) => {
+  const myId = Number(localStorage.getItem("userId"))
+
   return (
     <Scroller>
         {users.map(user => (
@@ -19,7 +21,7 @@ export const Users = ({ users, setReceiverId, setIsFetchUser, setCurrentUser }: 
             setIsFetchUser={setIsFetchUser}
             setCurrentUser={setCurrentUser}
             dateMessage={user.createdAt} 
-            receiverId={user.receiverId} 
+            receiverId={user.receiverId === myId ? user.ownerId : user.receiverId}
             text={user.messageText} 
             userName={user.userName} 
             setReceiverId={setReceiverId}

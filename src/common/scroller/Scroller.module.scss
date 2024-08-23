@@ -24,7 +24,7 @@
   background: #333;
   border-radius: var(--scrollbar-size);
 
-  transition: 'background 160ms ease-out';
+  transition: background 160ms ease-out;
 
   &:hover {
     background: #333;
@@ -35,7 +35,7 @@
   }
 
   &[data-orientation='horizontal'] {
-    flex-direction: 'column';
+    flex-direction: column;
     height: var(--scrollbar-size);
   }
 }

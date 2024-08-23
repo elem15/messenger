@@ -1,6 +1,8 @@
 .userBlock {
   display: flex;
   gap: 13px;
+  flex-wrap: wrap;
+  align-items: center;
 
   padding: 7px;
   width: 315px;
@@ -15,4 +17,16 @@
 
 .colorMessageInfo {
   color: #8D9094
+}
+
+.searchedUsers {
+  display: flex;
+  gap: 13px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 7px;
+  width: 315px;
+  border-bottom: 1px solid #4c4c4c;
+  background-color: #171717;
+  cursor: pointer;
 }
