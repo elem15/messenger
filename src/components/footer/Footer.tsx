@@ -34,7 +34,7 @@ export const Footer = ({ setMessageValue, sendMessage, ...rest }: Props) => {
         onChangeValue={onChangHandler}
         value={valueInput}
       />
-      <Button variant='link' onClick={onClickHandler} >
+      <Button style={{backgroundColor: 'black'}} variant='link' onClick={onClickHandler} >
         <Typography variant='h3'>Send Message</Typography>
       </Button>
     </div>

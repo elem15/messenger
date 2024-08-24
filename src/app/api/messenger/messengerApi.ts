@@ -1,7 +1,7 @@
-import { ResponseDialogsByUser } from '@/types/messanger';
+import { ResponseDialogsByUser } from '@/types/messenger';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../baseQueryWithReauth';
-import { IMessageInfo, IMessageType } from '@/types/messanger';
+import { IMessageInfo, IMessageType } from '@/types/messenger';
 
 export const messengerApi = createApi({
   reducerPath: 'messenger-remote',

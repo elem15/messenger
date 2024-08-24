@@ -6,18 +6,31 @@ import { useLazyGetMessengerByIdQuery, useLazyGetMessengerQuery } from '@/app/ap
 import { Footer } from './footer/Footer';
 import { SocketApi } from '@/app/api/socket/socket-api';
 import { Users } from './users/Users';
-import { IMessageType } from '@/types/messanger';
+import { IMessageType } from '@/types/messenger';
 import { SearchUserResults } from './users/SearchUserResults';
 import { AvatarSmallView } from '@/common/avatar';
 import { Dialogs } from './dialogs/Dialogs';
+
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
+import ru from 'javascript-time-ago/locale/ru.json'
+import {useTranslation} from "@/lib/hooks/useTranslation";
+import {setDialog} from "@/app/services/dialog-slice";
+import {useAppDispatch} from "@/lib/hooks/appHooks";
+
+TimeAgo.addLocale(en)
+TimeAgo.addLocale(ru)
 
 export type CurrentUser = {
   userId: number
   avaUrl: string
   name: {firstName: string, lastName: string}
 }
+
 const Messenger = () => {
+  const { t } = useTranslation()
   const accessToken = localStorage.getItem('token');
+  const dispatch = useAppDispatch()
 
   const [valueSearch, setValueSearch] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
@@ -27,10 +40,11 @@ const Messenger = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
   const [clearSearch, setClearSearch] = useState<'' | null>(null)
   const [isFetchUser, setIsFetchUser] = useState<boolean>(false)
+  const [isLoadingDialog, setIsLoadingDialog] = useState<boolean>(false)
 
   const [ getUsers, {data: dialogUsers} ] = useLazyGetMessengerQuery();
 
-  const [getDialogsByUser, {data: dialogUser, isFetching} ] = useLazyGetMessengerByIdQuery()
+  const [getDialogsByUser, {data: dialogUser} ] = useLazyGetMessengerByIdQuery()
 
   const onDebounce = (value: string) => {
     if (value) {
@@ -59,7 +73,12 @@ const Messenger = () => {
         res.isSuccess && setIsFetchUser(true)
       });
       if (currentUser?.userId) {
-        await getDialogsByUser({ accessToken, userId: currentUser.userId });
+        await getDialogsByUser({ accessToken, userId: currentUser.userId }).then(res => {
+          if (res.isSuccess) {
+            setIsLoadingDialog(false)
+            dispatch(setDialog(res.data))
+          }
+        });
       }
     };
 
@@ -67,6 +86,7 @@ const Messenger = () => {
   }, [isFetchUser, currentUser])
 
   useEffect(() => {
+    setIsLoadingDialog(true)
     // Обработчик получения сообщения
     SocketApi.socket?.on('receive-message', (message: IMessageType) => {
       console.log('Received message:', message);
@@ -92,11 +112,19 @@ const Messenger = () => {
       SocketApi.socket?.off('message-deleted');
       SocketApi.socket?.off('error');
     };
-  }, []);
+  }, [SocketApi.socket]);
+
+  const setTitle = () => {
+    if (currentUser) {
+      return <Typography variant={'h1'}>Loading...</Typography>
+    } else {
+      return <Typography>Выберите, кому хотели бы написать</Typography>
+    }
+  }
 
   return (
       <div className='flex flex-col h-full'>
-        <Typography variant="h1">Messenger</Typography>
+        <Typography variant="h1">{t.messenger}</Typography>
         <div className={s.container}>
           <div className={s.header}>
             <div className={s.searchBox}>
@@ -125,15 +153,17 @@ const Messenger = () => {
                     setIsFetchUser={setIsFetchUser}
                     setCurrentUser={setCurrentUser}
                     setReceiverId={setReceiverId}
+                    setIsLoadingDialog={setIsLoadingDialog}
                     users={dialogUsers.items}
                   />
               }
             </div>
             <div className={s.containerDialogs}>
-              <div className={currentUser ? s.afterChange : s.change}>
-                {!isFetching ?
-                  <Dialogs currentUser={currentUser} dialogUser={dialogUser}/> :
-                  <Typography variant={'h1'} className={s.change}>Loading...</Typography>}
+              <div className={currentUser && !isLoadingDialog ? s.afterChange : s.change}>
+                {isLoadingDialog ?
+                   setTitle() :
+                  <Dialogs currentUser={currentUser} dialogUser={dialogUser}/>
+                }
               </div>
               {currentUser && <Footer
                 clearSearch={clearSearch}

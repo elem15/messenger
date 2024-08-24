@@ -1,12 +1,13 @@
-// import { useTranslation } from '@/lib/hooks/useTranslation'
 import { AvatarSmallView } from '@/common/avatar'
 import { Typography } from '@/common/typography/typography'
 import s from './UStyles.module.scss'
-import { TimeAgo } from '@/common/time-ago'
-import { Avatar } from '@/types/messanger'
+import { Avatar } from '@/types/messenger'
 import { CurrentUser } from 'src/components/Messenger'
 import { useGetUserNameQuery } from '@/app/api/users/usersApi'
-import {Dispatch, useEffect} from 'react'
+import {Dispatch, useEffect, useState} from 'react'
+import {useFormatDate} from "@/lib/hooks/useFormatDate";
+import {StatusMessage} from "@/types/enum";
+import {useLazyGetMessengerByIdQuery} from "@/app/api/messenger/messengerApi";
 
 type Props = {
   receiverId: number
@@ -17,10 +18,24 @@ type Props = {
   setCurrentUser: ({userId, avaUrl, name: {firstName, lastName}}: CurrentUser) => void
   setReceiverId: (value: number) => void
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
+  setIsLoadingDialog: Dispatch<boolean>
 }
-export const User = ({ receiverId, text, setIsFetchUser, userName, dateMessage, avatar, setReceiverId, setCurrentUser }: Props) => {
-  // const { t } = useTranslation()
+export const User = (
+  {
+    receiverId,
+    text,
+    setIsFetchUser,
+    userName,
+    dateMessage,
+    avatar,
+    setReceiverId,
+    setCurrentUser,
+    setIsLoadingDialog
+  }: Props) => {
   const accessToken = localStorage.getItem('token');
+
+  const [countMessagesNotRead, setCountMessagesNotRead] = useState<number>(0)
+  const [getDialogsByUser ] = useLazyGetMessengerByIdQuery()
 
   const { data: user } = useGetUserNameQuery({
     name: userName ? userName : null,
@@ -30,6 +45,7 @@ export const User = ({ receiverId, text, setIsFetchUser, userName, dateMessage, 
   const onClickHandler = () => {
     setReceiverId(receiverId)
     setIsFetchUser(prev  => !prev)
+    setIsLoadingDialog(true)
     setCurrentUser({
       userId: receiverId, 
       avaUrl: avatar[0]?.url, 
@@ -52,20 +68,37 @@ export const User = ({ receiverId, text, setIsFetchUser, userName, dateMessage, 
     }
     return text
   }
+  useEffect(() => {
+    const fetchData = async () => {
+      await getDialogsByUser({accessToken: accessToken, userId: receiverId}).then(res => {
+        if (res.isSuccess) {
+          const count = res.data.filter(msg => msg.status === StatusMessage.RECEIVED).length
+          setCountMessagesNotRead(count)
+        }
+      })
+    }
+    fetchData()
+  }, []);
 
   return (
     <div className={s.userBlock} onClick={onClickHandler} >
       <AvatarSmallView avatarOwner={avatar[0]?.url} className="h-fit" />
       <div>
-        <div className="flex items-center justify-between w-[245px]">
+        <div className={s.nameAndDate}>
           <Typography>{`${user?.firstName || '...' } ${setNameLength(user?.lastName) || '...'}`}</Typography>
           <Typography className={s.colorMessageInfo} variant="small_text">
-            {/*<TimeAgo lg={t.lg} updatedAt={dateMessage} />*/}
+            {useFormatDate(dateMessage)}
           </Typography>
         </div>
-        <Typography className={s.colorMessageInfo} variant="small_text">
-          {setTextLength(text)}
-        </Typography>
+        <div className="flex justify-between">
+          <Typography className={s.colorMessageInfo} variant="small_text">
+            {setTextLength(text)}
+          </Typography>
+          {countMessagesNotRead > 0 &&
+            <Typography as={'span'} variant={'small_text'} className={s.count}>
+            {countMessagesNotRead}
+          </Typography>}
+        </div>
       </div>
     </div>
   )

@@ -1,13 +1,12 @@
-import { useLocation } from 'react-router-dom';
-import { en, ru } from '../locales'
+import {en, ru} from "@/lib/locales";
+// import {useLocation} from "react-router";
 
 export const useTranslation = () => {
   // const location = useLocation();
   // const searchParams = new URLSearchParams(location.search);
   // const locale = searchParams.get('locale') || 'en';
-  //
-  // const t = locale === 'en' ? en : ru
+  const locale = navigator.language.split('-')[0]
 
-  // return { t }
-  return 1
+  const t = locale === 'en' ? en : ru
+  return { t }
 }

@@ -1,8 +1,5 @@
-export enum StatusMessage {
-  SENT = 'SENT',
-  RECEIVED = 'RECEIVED',
-  READ = 'READ'
-}
+import {StatusMessage} from "@/types/enum";
+
 export type Avatar = {
   url: string,
   width: number,
@@ -18,7 +15,7 @@ export type Items = {
   createdAt: string,
   updatedAt: string,
   messageType: "TEXT",
-  status: StatusMessage.SENT,
+  status: StatusMessage,
   userName: string,
   avatars: Avatar[]
 }
@@ -38,7 +35,7 @@ interface IMessageType {
   ownerId: number,
   receiverId: number,
   messageText: string,
-  status: StatusMessage.SENT,
+  status: StatusMessage,
   messageType: "TEXT",
   createdAt: string,
   updatedAt: string

@@ -1,14 +1,17 @@
 .messagesSide {
   display: flex;
   flex-direction: column;
+  padding: 15px;
 }
 
 .messageOwner {
   padding: 5px 10px;
-  background-color: #234E99;
+  background-color: #333333;
   border-radius: 8px;
-  width: fit-content;
-  margin: 0 0 20px 15px;
+  max-width: 400px;
+  min-width: 200px;
+  margin-left: 7px;
+  overflow-wrap: break-word;
 
   &:first-child {
     margin-bottom: 3px;
@@ -17,5 +20,15 @@
 
 .rightSide {
   margin-left: auto;
-  margin-right: 10px;
+  background-color: #234E99;
+}
+
+.messageAndDateIde {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.checkMark {
+  color: var(--color-light-700)
 }
