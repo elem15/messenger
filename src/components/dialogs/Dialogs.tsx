@@ -11,7 +11,6 @@ import DoneAllOutline from "@/assets/icons/DoneAllOutline";
 import CheckmarkOutline from "@/assets/icons/CheckmarkOutline";
 import {StatusMessage} from "@/types/enum";
 import {SocketApi} from "@/app/api/socket/socket-api";
-import {useTranslation} from "@/lib/hooks/useTranslation";
 
 type Props = {
   currentUser: CurrentUser | null

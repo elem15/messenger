@@ -1,6 +1,6 @@
 import React, { ComponentPropsWithoutRef, useEffect, useState } from 'react';
 
-import { Input } from '../../common/input/input';
+import { Input } from '@/common/input/input';
 import {useTranslation} from "@/lib/hooks/useTranslation";
 
 type Props = {

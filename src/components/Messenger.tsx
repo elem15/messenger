@@ -35,7 +35,7 @@ const Messenger = ({language = 'en'}: Props) => {
 
   const [valueSearch, setValueSearch] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
-  const [messages, setMessages] = useState<IMessageType[]>([]);
+  // const [messages, setMessages] = useState<IMessageType[]>([]);
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [isShowUsersFromSearch, setIsShowUsersFromSearch] = useState<boolean>(false)
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
