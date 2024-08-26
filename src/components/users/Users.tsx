@@ -10,8 +10,9 @@ type Props = {
   setCurrentUser: ({userId, avaUrl, name: {firstName, lastName}}: CurrentUser) => void
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
   setIsLoadingDialog: Dispatch<boolean>
+  language: 'en' | 'ru'
 }
-export const Users = ({ users, setReceiverId, setIsFetchUser, setCurrentUser, setIsLoadingDialog }: Props) => {
+export const Users = ({ users, setReceiverId, setIsFetchUser, setCurrentUser, setIsLoadingDialog, language }: Props) => {
   const myId = Number(localStorage.getItem("userId"))
 
   return (
@@ -28,6 +29,7 @@ export const Users = ({ users, setReceiverId, setIsFetchUser, setCurrentUser, se
             userName={user.userName} 
             setReceiverId={setReceiverId}
             avatar={user.avatars}
+            language={language}
           />
         ))}
     </Scroller>

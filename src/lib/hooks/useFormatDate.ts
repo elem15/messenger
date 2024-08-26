@@ -1,4 +1,4 @@
-export function useFormatDate(dateString: string): string {
+export function useFormatDate(dateString: string, language: 'en' | 'ru'): string {
   const date = new Date(dateString);
   const now = new Date();
 
@@ -9,9 +9,9 @@ export function useFormatDate(dateString: string): string {
   if (isSameDay) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   } else if (isSameWeek) {
-    return date.toLocaleDateString([], { weekday: 'short' });
+    return date.toLocaleDateString([language], { weekday: 'short' });
   } else if (isSameYear) {
-    return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString([language], { day: 'numeric', month: 'short' });
   } else {
     return date.getFullYear().toString();
   }

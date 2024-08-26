@@ -19,6 +19,7 @@ type Props = {
   setReceiverId: (value: number) => void
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
   setIsLoadingDialog: Dispatch<boolean>
+  language: 'en' | 'ru'
 }
 export const User = (
   {
@@ -30,7 +31,8 @@ export const User = (
     avatar,
     setReceiverId,
     setCurrentUser,
-    setIsLoadingDialog
+    setIsLoadingDialog,
+    language
   }: Props) => {
   const accessToken = localStorage.getItem('token');
 
@@ -87,7 +89,7 @@ export const User = (
         <div className={s.nameAndDate}>
           <Typography>{`${user?.firstName || '...' } ${setNameLength(user?.lastName) || '...'}`}</Typography>
           <Typography className={s.colorMessageInfo} variant="small_text">
-            {useFormatDate(dateMessage)}
+            {useFormatDate(dateMessage, language)}
           </Typography>
         </div>
         <div className="flex justify-between">

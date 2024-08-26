@@ -10,12 +10,15 @@ import {AvatarSmallView} from "@/common/avatar";
 import DoneAllOutline from "@/assets/icons/DoneAllOutline";
 import CheckmarkOutline from "@/assets/icons/CheckmarkOutline";
 import {StatusMessage} from "@/types/enum";
+import {SocketApi} from "@/app/api/socket/socket-api";
+import {useTranslation} from "@/lib/hooks/useTranslation";
 
 type Props = {
   currentUser: CurrentUser | null
   dialogUser: IMessageType[]
+  language: 'en' | 'ru'
 }
-export const Dialogs = ({currentUser, dialogUser}: Props) => {
+export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
   const myId = Number(localStorage.getItem("userId"))
 
   const lastMessageRef = useRef(null);
@@ -36,6 +39,11 @@ export const Dialogs = ({currentUser, dialogUser}: Props) => {
     <Scroller>
       <div className={s.messagesSide}>
         {dialogUser?.map((msg: IMessageType) => {
+          if (msg.ownerId !== myId) {
+            if (msg.status === StatusMessage.RECEIVED) {
+              SocketApi.socket?.emit('acknowledge', { messageId: msg.id, status: 'READ' });
+            }
+          }
             return (
               <div className="flex gap-1.5 mb-5">
                 {msg.ownerId !== myId && <AvatarSmallView avatarOwner={currentUser.avaUrl} className="h-fit mt-auto"/>}
@@ -44,7 +52,7 @@ export const Dialogs = ({currentUser, dialogUser}: Props) => {
                   <Typography>{msg.messageText}</Typography>
                   <div className="flex gap-1 items-center">
                     <Typography className={s.messageAndDateIde} variant={"small_text"}>
-                      {useFormatDate(msg.updatedAt)}
+                      {useFormatDate(msg.updatedAt, language)}
                     </Typography>
                     {msg.ownerId === myId && setCheckMark(msg.status)}
                   </div>

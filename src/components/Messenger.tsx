@@ -15,8 +15,6 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en.json'
 import ru from 'javascript-time-ago/locale/ru.json'
 import {useTranslation} from "@/lib/hooks/useTranslation";
-import {setDialog} from "@/app/services/dialog-slice";
-import {useAppDispatch} from "@/lib/hooks/appHooks";
 
 TimeAgo.addLocale(en)
 TimeAgo.addLocale(ru)
@@ -27,10 +25,13 @@ export type CurrentUser = {
   name: {firstName: string, lastName: string}
 }
 
-const Messenger = () => {
-  const { t } = useTranslation()
+type Props = {
+  language?: 'en' | 'ru'
+}
+
+const Messenger = ({language = 'en'}: Props) => {
+  const { t } = useTranslation(language)
   const accessToken = localStorage.getItem('token');
-  const dispatch = useAppDispatch()
 
   const [valueSearch, setValueSearch] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
@@ -74,10 +75,7 @@ const Messenger = () => {
       });
       if (currentUser?.userId) {
         await getDialogsByUser({ accessToken, userId: currentUser.userId }).then(res => {
-          if (res.isSuccess) {
-            setIsLoadingDialog(false)
-            dispatch(setDialog(res.data))
-          }
+          res.isSuccess && setIsLoadingDialog(false)
         });
       }
     };
@@ -90,7 +88,8 @@ const Messenger = () => {
     // Обработчик получения сообщения
     SocketApi.socket?.on('receive-message', (message: IMessageType) => {
       console.log('Received message:', message);
-      setMessages((prevMessages) => [message, ...prevMessages]);
+      getUsers({ accessToken })
+      // setMessages((prevMessages) => [message, ...prevMessages]);
 
       // Подтверждение получения сообщения
       SocketApi.socket?.emit('acknowledge', { messageId: message.id, status: 'RECEIVED' });
@@ -106,6 +105,8 @@ const Messenger = () => {
       console.error('Error occurred:', error);
     });
 
+
+
     return () => {
       SocketApi.socket?.off('receive-message');
       SocketApi.socket?.off('update-message');
@@ -116,19 +117,21 @@ const Messenger = () => {
 
   const setTitle = () => {
     if (currentUser) {
-      return <Typography variant={'h1'}>Loading...</Typography>
+      return <Typography variant={'h1'}>{t.Loading}</Typography>
     } else {
-      return <Typography>Выберите, кому хотели бы написать</Typography>
+      return <Typography>{t.Choose}</Typography>
     }
   }
 
+  // console.log(language)
+
   return (
       <div className='flex flex-col h-full'>
-        <Typography variant="h1">{t.messenger}</Typography>
+        <Typography variant="h1">{t.Messenger}</Typography>
         <div className={s.container}>
           <div className={s.header}>
             <div className={s.searchBox}>
-              <DebouncedInput setClearSearch={setClearSearch} clearSearch={clearSearch} callback={onDebounce}/>
+              <DebouncedInput language={language} setClearSearch={setClearSearch} clearSearch={clearSearch} callback={onDebounce}/>
             </div>
             {currentUser && <div className={s.currentUser}>
               <AvatarSmallView avatarOwner={currentUser?.avaUrl} className="h-fit"/>
@@ -150,6 +153,7 @@ const Messenger = () => {
                     setReceiverId={setReceiverId}
                   /> :
                   dialogUsers && <Users
+                    language={language}
                     setIsFetchUser={setIsFetchUser}
                     setCurrentUser={setCurrentUser}
                     setReceiverId={setReceiverId}
@@ -162,10 +166,11 @@ const Messenger = () => {
               <div className={currentUser && !isLoadingDialog ? s.afterChange : s.change}>
                 {isLoadingDialog ?
                    setTitle() :
-                  <Dialogs currentUser={currentUser} dialogUser={dialogUser}/>
+                  <Dialogs language={language} currentUser={currentUser} dialogUser={dialogUser}/>
                 }
               </div>
               {currentUser && <Footer
+                language={language}
                 clearSearch={clearSearch}
                 sendMessage={sendMessage}
                 setMessageValue={setNewMessage}

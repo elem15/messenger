@@ -1,14 +1,17 @@
 import React, { ComponentPropsWithoutRef, useEffect, useState } from 'react';
 
 import { Input } from '../../common/input/input';
+import {useTranslation} from "@/lib/hooks/useTranslation";
 
 type Props = {
   callback: (value: string) => void;
   clearSearch?: '' | null
   setClearSearch: (val: '' | null) => void
+  language: 'en' | 'ru'
 } & Omit<ComponentPropsWithoutRef<'input'>, 'onChange'>;
 
-const DebouncedInput = ({ callback, ...rest }: Props) => {
+const DebouncedInput = ({ callback, language, ...rest }: Props) => {
+  const {t} = useTranslation(language)
   const [debouncedValue, setDebouncedValue] = useState<null | string>(null);
   const [valueInput, setValueInput] = useState<string>('');
 
@@ -37,7 +40,7 @@ const DebouncedInput = ({ callback, ...rest }: Props) => {
       {...rest}
       value={valueInput}
       onChangeValue={handleInputChange}
-      placeholder="Search"
+      placeholder={t.Search}
       type={'search'}
     />
   );
