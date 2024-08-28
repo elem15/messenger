@@ -4,6 +4,7 @@ import  webpack from "webpack"
 import { Configuration as DevServerConfiguration } from "webpack-dev-server"
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 const { ModuleFederationPlugin } = require('webpack').container;
+import PreactRefreshPlugin from '@prefresh/webpack';
 
 type Mode = "development" | "production"
 
@@ -19,12 +20,16 @@ export default (env: envVariables) => {
   const config: webpack.Configuration = {
     mode: env.mode ?? 'development',
     entry: path.resolve(__dirname, 'src', 'index.tsx'),
+    optimization: {
+      runtimeChunk: "single",
+    },
     plugins: [
       new HtmlWebpackPlugin({template: path.resolve(__dirname, 'public', 'index.html')}),
       isProd && new MiniCssExtractPlugin({
         filename: "css/[name].[contenthash:8].css",
         chunkFilename: "css/[name].[contenthash:8].css",
       }),
+      new PreactRefreshPlugin(),
       new ModuleFederationPlugin({
         name: "messenger_app",
         library: { type: 'var', name: "messenger_app" },

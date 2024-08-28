@@ -12,7 +12,7 @@ export const messengerApi = createApi({
       query: ({accessToken}) => {
         return {
           method: 'GET',
-          url: `/messanger?pageSize=100`,
+          url: `/messanger?pageSize=20`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + accessToken,
@@ -26,7 +26,7 @@ export const messengerApi = createApi({
       query: ({accessToken, userId}) => {
         return {
           method: 'GET',
-          url: `/messanger/${userId}?pageSize=100`,
+          url: `/messanger/${userId}?pageSize=20`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + accessToken,

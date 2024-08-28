@@ -34,7 +34,7 @@ export const User = (
     setIsLoadingDialog,
     language
   }: Props) => {
-  const accessToken = localStorage.getItem('token');
+  const accessToken = localStorage.getItem('token-remote');
 
   const [countMessagesNotRead, setCountMessagesNotRead] = useState<number>(0)
   const [getDialogsByUser ] = useLazyGetMessengerByIdQuery()

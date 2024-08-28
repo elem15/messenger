@@ -44,3 +44,9 @@ interface IMessageType {
 type ResponseDialogsByUser = Omit<IMessageInfo, 'items'> & {
   items: IMessageType[]
 }
+
+interface PreviewFile {
+  id: number,
+  file: File,
+  previewUrl: string
+}

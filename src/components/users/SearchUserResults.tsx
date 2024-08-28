@@ -22,7 +22,7 @@ export const SearchUserResults = ({
   setClearSearch, 
   setReceiverId}: Props
 ) => {
-  const accessToken = localStorage.getItem('token');
+  const accessToken = localStorage.getItem('token-remote');
 
   const { data: users } = useGetUsersNameQuery({
     name: valueSearch ? valueSearch : null,

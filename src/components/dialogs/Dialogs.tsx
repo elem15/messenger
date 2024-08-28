@@ -39,12 +39,12 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
       <div className={s.messagesSide}>
         {dialogUser?.map((msg: IMessageType) => {
           if (msg.ownerId !== myId) {
-            if (msg.status === StatusMessage.RECEIVED) {
+            if (msg.status === StatusMessage.RECEIVED || StatusMessage.SENT) {
               SocketApi.socket?.emit('acknowledge', { messageId: msg.id, status: 'READ' });
             }
           }
             return (
-              <div className="flex gap-1.5 mb-5">
+              <div key={msg.id} className="flex gap-1.5 mb-5">
                 {msg.ownerId !== myId && <AvatarSmallView avatarOwner={currentUser.avaUrl} className="h-fit mt-auto"/>}
                 <div key={msg.id} className={clsx(s.messageOwner, msg.ownerId === myId && s.rightSide)}
                      ref={lastMessageRef}>

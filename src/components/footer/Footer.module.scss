@@ -1,10 +1,32 @@
 .footerContainer {
+  border-top: 1px solid #4c4c4c;
+  width: 100%;
+}
+
+.previewPhotoBox {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .closePhoto {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    cursor: pointer;
+  }
+}
+
+.inputBox {
   display: flex;
   justify-content: space-between;
   padding: 0 15px 0 5px;
-
-  border-top: 1px solid #4c4c4c;
-  width: 100%;
 
   p {
     color: #397DF6;
@@ -34,7 +56,7 @@
   display: flex;
   gap: 10px;
   border: none;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .iconBox .icon.hidden {

@@ -15,6 +15,7 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en.json'
 import ru from 'javascript-time-ago/locale/ru.json'
 import {useTranslation} from "@/lib/hooks/useTranslation";
+import {string} from "prop-types";
 
 TimeAgo.addLocale(en)
 TimeAgo.addLocale(ru)
@@ -31,11 +32,11 @@ type Props = {
 
 const Messenger = ({language = 'en'}: Props) => {
   const { t } = useTranslation(language)
-  const accessToken = localStorage.getItem('token');
+  const accessToken = localStorage.getItem('token-remote');
+  const myId = localStorage.getItem('userId');
 
   const [valueSearch, setValueSearch] = useState<string>('');
-  const [newMessage, setNewMessage] = useState<string>('');
-  // const [messages, setMessages] = useState<IMessageType[]>([]);
+  // const [newMessage, setNewMessage] = useState<string>('');
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [isShowUsersFromSearch, setIsShowUsersFromSearch] = useState<boolean>(false)
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
@@ -57,15 +58,19 @@ const Messenger = ({language = 'en'}: Props) => {
     }
   };
 
-  function sendMessage() {
-    accessToken && SocketApi.creatConnection(accessToken);
-    const messageData = {
-      message: newMessage,
-      receiverId,
-    };
+  function sendMessage(value: string | File) {
+    if (SocketApi.socket?.connected) {
+      const messageData = {
+        message: value,
+        receiverId,
+      };
 
-    SocketApi.socket?.emit('receive-message', messageData);
-    setIsFetchUser(prev => !prev)
+      //отправка сообщения
+      SocketApi.socket?.emit('receive-message', messageData);
+      setIsFetchUser((prev) => !prev);
+    } else {
+      console.error('WebSocket is not connected');
+    }
   }
 
   useEffect(() => {
@@ -81,39 +86,35 @@ const Messenger = ({language = 'en'}: Props) => {
     };
 
     fetchData();
-  }, [isFetchUser, currentUser])
+  }, [isFetchUser, currentUser, accessToken])
+
 
   useEffect(() => {
-    setIsLoadingDialog(true)
-    // Обработчик получения сообщения
-    SocketApi.socket?.on('receive-message', (message: IMessageType) => {
-      console.log('Received message:', message);
-      getUsers({ accessToken })
-      // setMessages((prevMessages) => [message, ...prevMessages]);
+    if (accessToken) {
+      SocketApi.creatConnection(accessToken);
+      setIsLoadingDialog(true)
 
-      // Подтверждение получения сообщения
-      SocketApi.socket?.emit('acknowledge', { messageId: message.id, status: 'RECEIVED' });
-    });
+      // Обработчик получения сообщения
+      SocketApi.socket?.on('receive-message', (message: IMessageType) => {
+        if (message.ownerId !== +myId) {
+          console.log('Received message:', message);
+          getUsers({ accessToken })
 
-    // Обработчик удаления сообщения
-    // SocketApi.socket?.on('message-deleted', (messageId) => {
-    //   console.log('Message deleted:', messageId);
-    //   setMessages((prevMessages) => prevMessages.filter(msg => msg.id !== messageId));
-    // });
+          // Подтверждение получения сообщения
+          SocketApi.socket?.emit('acknowledge', { messageId: message.id, status: 'RECEIVED' });
+        }
+      });
 
-    SocketApi.socket?.on('error', (error) => {
-      console.error('Error occurred:', error);
-    });
+      SocketApi.socket?.on('error', (error) => {
+        console.error('Error occurred:', error);
+      });
 
-
-
-    return () => {
-      SocketApi.socket?.off('receive-message');
-      SocketApi.socket?.off('update-message');
-      SocketApi.socket?.off('message-deleted');
-      SocketApi.socket?.off('error');
-    };
-  }, [SocketApi.socket]);
+      return () => {
+        SocketApi.socket?.off('receive-message');
+        SocketApi.socket?.off('error');
+      };
+    }
+  }, [accessToken]);
 
   const setTitle = () => {
     if (currentUser) {
@@ -122,8 +123,6 @@ const Messenger = ({language = 'en'}: Props) => {
       return <Typography>{t.Choose}</Typography>
     }
   }
-
-  // console.log(language)
 
   return (
       <div className='flex flex-col h-full'>
@@ -169,12 +168,15 @@ const Messenger = ({language = 'en'}: Props) => {
                   <Dialogs language={language} currentUser={currentUser} dialogUser={dialogUser}/>
                 }
               </div>
-              {currentUser && <Footer
-                language={language}
-                clearSearch={clearSearch}
-                sendMessage={sendMessage}
-                setMessageValue={setNewMessage}
-              />}
+              {currentUser &&
+                <Footer
+                  receiverId={currentUser.userId}
+                  language={language}
+                  clearSearch={clearSearch}
+                  sendMessage={sendMessage}
+                  // setMessageValue={setNewMessage}
+                />
+              }
             </div>
           </div>
         </div>

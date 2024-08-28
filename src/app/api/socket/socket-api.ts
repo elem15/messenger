@@ -11,5 +11,13 @@ export class SocketApi {
     }
 
     this.socket = io('https://inctagram.work', socketOptions)
+
+    this.socket.on('connect', () => {
+      console.log('webSocket connected')
+    })
+
+    this.socket.on('disconnect', (e) => {
+      console.log('webSocket disconnected', e)
+    })
   }
 }

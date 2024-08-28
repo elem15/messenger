@@ -28,7 +28,7 @@ export const baseQueryWithReauth: BaseQueryFn<
     if (refreshResult.data) {
       const data = refreshResult.data as { accessToken: string }
 
-      localStorage.setItem('token', data.accessToken)
+      localStorage.setItem('token-remote', data.accessToken)
       result = await baseQuery(args, api, extraOptions)
 
       const userResult = await baseQuery(
@@ -44,7 +44,7 @@ export const baseQueryWithReauth: BaseQueryFn<
         localStorage.setItem('userId', userData.userId)
       }
     } else {
-      localStorage.removeItem('token')
+      localStorage.removeItem('token-remote')
       localStorage.removeItem('userId')
     }
   }
