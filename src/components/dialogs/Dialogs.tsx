@@ -9,8 +9,8 @@ import {useFormatDate} from "@/lib/hooks/useFormatDate";
 import {AvatarSmallView} from "@/common/avatar";
 import DoneAllOutline from "@/assets/icons/DoneAllOutline";
 import CheckmarkOutline from "@/assets/icons/CheckmarkOutline";
-import {StatusMessage} from "@/types/enum";
-import {SocketApi} from "@/app/api/socket/socket-api";
+import {StatusMessage, WS_EVENT_PATH} from "@/types/enum";
+import {SocketApi} from "@/socket-api";
 
 type Props = {
   currentUser: CurrentUser | null
@@ -40,7 +40,7 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
         {dialogUser?.map((msg: IMessageType) => {
           if (msg.ownerId !== myId) {
             if (msg.status === StatusMessage.RECEIVED || StatusMessage.SENT) {
-              SocketApi.socket?.emit('acknowledge', { messageId: msg.id, status: 'READ' });
+              // SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, {messageId: msg.id, status: 'READ'});
             }
           }
             return (

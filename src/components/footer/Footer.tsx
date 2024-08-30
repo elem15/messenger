@@ -7,7 +7,7 @@ import {useTranslation} from "@/lib/hooks/useTranslation";
 import MicOutline from '@/assets/icons/micOutline'
 import ImageOutline from "@/assets/icons/imageOutline";
 import {useGeneralInputRef} from "@/lib/hooks/useGeneralInputRef";
-import {SocketApi} from "@/app/api/socket/socket-api";
+import {SocketApi} from "@/socket-api";
 import {PreviewFile} from "@/types/messenger";
 import PlusCircle from "@/assets/icons/PlusCircle";
 import CloseOutline from "@/assets/icons/CloseOutline";
@@ -33,7 +33,6 @@ export const Footer = ({ sendMessage, language, receiverId, ...rest }: Props) =>
 
   const onFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    console.log(selectedFiles)
 
     if (selectedFiles) {
         const reader = new FileReader();

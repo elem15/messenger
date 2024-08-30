@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import s from '@/components/Messenger.module.scss';
 import { useLazyGetMessengerByIdQuery, useLazyGetMessengerQuery } from '@/app/api/messenger/messengerApi';
 import { Footer } from './footer/Footer';
-import { SocketApi } from '@/app/api/socket/socket-api';
+import { SocketApi } from '@/socket-api';
 import { Users } from './users/Users';
 import { IMessageType } from '@/types/messenger';
 import { SearchUserResults } from './users/SearchUserResults';
@@ -16,6 +16,8 @@ import en from 'javascript-time-ago/locale/en.json'
 import ru from 'javascript-time-ago/locale/ru.json'
 import {useTranslation} from "@/lib/hooks/useTranslation";
 import {string} from "prop-types";
+import {WS_EVENT_PATH} from "@/types/enum";
+import {message} from "memfs/lib/internal/errors";
 
 TimeAgo.addLocale(en)
 TimeAgo.addLocale(ru)
@@ -66,7 +68,10 @@ const Messenger = ({language = 'en'}: Props) => {
       };
 
       //отправка сообщения
-      SocketApi.socket?.emit('receive-message', messageData);
+      SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, messageData, (message: IMessageType, acknowledge: any) => {
+        acknowledge({ messageId: message.id, status: 'RECEIVED' })
+        console.log(acknowledge)
+      });
       setIsFetchUser((prev) => !prev);
     } else {
       console.error('WebSocket is not connected');
@@ -94,15 +99,18 @@ const Messenger = ({language = 'en'}: Props) => {
       SocketApi.creatConnection(accessToken);
       setIsLoadingDialog(true)
 
-      // Обработчик получения сообщения
-      SocketApi.socket?.on('receive-message', (message: IMessageType) => {
-        if (message.ownerId !== +myId) {
-          console.log('Received message:', message);
-          getUsers({ accessToken })
+      // SocketApi.socket?.on(WS_EVENT_PATH.RECEIVE_MESSAGE, (message: IMessageType) => {
+      //   if (message.status === "RECEIVED") {
+      //     console.log("Your message was received by the recipient:", message);
+      //   }
+      // });
 
-          // Подтверждение получения сообщения
-          SocketApi.socket?.emit('acknowledge', { messageId: message.id, status: 'RECEIVED' });
-        }
+      // Получения сообщения и подтверждение
+      SocketApi.socket?.on(WS_EVENT_PATH.MESSAGE_SENT, (message, acknowledge) => {
+        console.log("Message received:", message)
+
+        acknowledge({ messageId: message.id, status: 'RECEIVED' })
+        getUsers({ accessToken })
       });
 
       SocketApi.socket?.on('error', (error) => {
