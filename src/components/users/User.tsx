@@ -35,6 +35,7 @@ export const User = (
     language
   }: Props) => {
   const accessToken = localStorage.getItem('token-remote');
+  const myId = localStorage.getItem('userId');
 
   const [countMessagesNotRead, setCountMessagesNotRead] = useState<number>(0)
   const [getDialogsByUser ] = useLazyGetMessengerByIdQuery()
@@ -74,7 +75,11 @@ export const User = (
     const fetchData = async () => {
       await getDialogsByUser({accessToken: accessToken, userId: receiverId}).then(res => {
         if (res.isSuccess) {
-          const count = res.data.filter(msg => msg.status === StatusMessage.RECEIVED).length
+          const count = res.data.filter(msg => {
+            if (msg.ownerId !== +myId) {
+              return  msg.status === StatusMessage.RECEIVED
+            }
+          }).length
           setCountMessagesNotRead(count)
         }
       })

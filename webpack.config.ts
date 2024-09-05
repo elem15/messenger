@@ -20,9 +20,6 @@ export default (env: envVariables) => {
   const config: webpack.Configuration = {
     mode: env.mode ?? 'development',
     entry: path.resolve(__dirname, 'src', 'index.tsx'),
-    optimization: {
-      runtimeChunk: "single",
-    },
     plugins: [
       new HtmlWebpackPlugin({template: path.resolve(__dirname, 'public', 'index.html')}),
       isProd && new MiniCssExtractPlugin({
@@ -31,8 +28,7 @@ export default (env: envVariables) => {
       }),
       new PreactRefreshPlugin(),
       new ModuleFederationPlugin({
-        name: "messenger_app",
-        library: { type: 'var', name: "messenger_app" },
+        name: "messengerRemote",
         filename: 'remoteEntry.js',
         exposes: {
           './MessengerBlock': './src/components/Messenger',
@@ -55,11 +51,6 @@ export default (env: envVariables) => {
             singleton: true,
             version: '0',
           },
-          'react-time-ago': {
-            requiredVersion: false,
-            singleton: true,
-            version: '0',
-          }
         },
       })
     ],

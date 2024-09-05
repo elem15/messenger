@@ -8,6 +8,7 @@ export class SocketApi {
       query: {
         accessToken: token,
       },
+      transports: ['websocket'],
     }
 
     this.socket = io('https://inctagram.work', socketOptions)

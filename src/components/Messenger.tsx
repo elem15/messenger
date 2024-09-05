@@ -38,7 +38,6 @@ const Messenger = ({language = 'en'}: Props) => {
   const myId = localStorage.getItem('userId');
 
   const [valueSearch, setValueSearch] = useState<string>('');
-  // const [newMessage, setNewMessage] = useState<string>('');
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [isShowUsersFromSearch, setIsShowUsersFromSearch] = useState<boolean>(false)
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
@@ -68,9 +67,8 @@ const Messenger = ({language = 'en'}: Props) => {
       };
 
       //отправка сообщения
-      SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, messageData, (message: IMessageType, acknowledge: any) => {
-        acknowledge({ messageId: message.id, status: 'RECEIVED' })
-        console.log(acknowledge)
+      SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, messageData, (message: IMessageType) => {
+        console.log("STATUS: ", message.status)
       });
       setIsFetchUser((prev) => !prev);
     } else {
@@ -99,14 +97,14 @@ const Messenger = ({language = 'en'}: Props) => {
       SocketApi.creatConnection(accessToken);
       setIsLoadingDialog(true)
 
-      // SocketApi.socket?.on(WS_EVENT_PATH.RECEIVE_MESSAGE, (message: IMessageType) => {
-      //   if (message.status === "RECEIVED") {
-      //     console.log("Your message was received by the recipient:", message);
-      //   }
-      // });
+      SocketApi.socket?.on(WS_EVENT_PATH.RECEIVE_MESSAGE, (message: IMessageType) => {
+        if (message.status === "RECEIVED") {
+          console.log("Your message was received by the recipient:", message);
+        }
+      });
 
       // Получения сообщения и подтверждение
-      SocketApi.socket?.on(WS_EVENT_PATH.MESSAGE_SENT, (message, acknowledge) => {
+      SocketApi.socket?.on(WS_EVENT_PATH.MESSAGE_SENT,(message, acknowledge) => {
         console.log("Message received:", message)
 
         acknowledge({ messageId: message.id, status: 'RECEIVED' })
@@ -122,7 +120,7 @@ const Messenger = ({language = 'en'}: Props) => {
         SocketApi.socket?.off('error');
       };
     }
-  }, [accessToken]);
+  }, [accessToken, SocketApi.socket]);
 
   const setTitle = () => {
     if (currentUser) {
@@ -182,7 +180,6 @@ const Messenger = ({language = 'en'}: Props) => {
                   language={language}
                   clearSearch={clearSearch}
                   sendMessage={sendMessage}
-                  // setMessageValue={setNewMessage}
                 />
               }
             </div>

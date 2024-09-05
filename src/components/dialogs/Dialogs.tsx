@@ -3,14 +3,14 @@ import {CurrentUser} from "src/components/Messenger"
 import {Typography} from "@/common/typography/typography"
 import s from './Dialogs.module.scss'
 import {Scroller} from "@/common/scroller/Scroller"
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {clsx} from "clsx";
 import {useFormatDate} from "@/lib/hooks/useFormatDate";
 import {AvatarSmallView} from "@/common/avatar";
 import DoneAllOutline from "@/assets/icons/DoneAllOutline";
 import CheckmarkOutline from "@/assets/icons/CheckmarkOutline";
-import {StatusMessage, WS_EVENT_PATH} from "@/types/enum";
-import {SocketApi} from "@/socket-api";
+import {StatusMessage} from "@/types/enum";
+import {useOnReadMessageMutation} from "@/app/api/messenger/messengerApi";
 
 type Props = {
   currentUser: CurrentUser | null
@@ -19,14 +19,35 @@ type Props = {
 }
 export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
   const myId = Number(localStorage.getItem("userId"))
+  const accessToken = localStorage.getItem('token-remote');
 
+  const [messageIds, setMessageIds] = useState<number[]>([]);
+  const [shouldSend, setShouldSend] = useState(false);
+  const [getChangeStatus] = useOnReadMessageMutation()
   const lastMessageRef = useRef(null);
 
   useEffect(() => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+
+    if (dialogUser?.length > 0) {
+      const ids = dialogUser.reduce((acc: number[], msg) => {
+        if (msg.ownerId !== myId && [StatusMessage.RECEIVED, StatusMessage.SENT].includes(msg.status)) {
+          acc.push(msg.id);
+        }
+        return acc;
+      }, []);
+
+      setMessageIds(ids);
+    }
   }, [dialogUser])
+
+  useEffect(() => {
+    if (messageIds?.length > 0) {
+      getChangeStatus({accessToken, body: {'ids': messageIds}})
+    }
+  }, [messageIds]);
 
   const setCheckMark = (status: StatusMessage) => {
       if (status === StatusMessage.SENT) return <CheckmarkOutline fill={'white'} />
@@ -38,11 +59,6 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
     <Scroller>
       <div className={s.messagesSide}>
         {dialogUser?.map((msg: IMessageType) => {
-          if (msg.ownerId !== myId) {
-            if (msg.status === StatusMessage.RECEIVED || StatusMessage.SENT) {
-              // SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, {messageId: msg.id, status: 'READ'});
-            }
-          }
             return (
               <div key={msg.id} className="flex gap-1.5 mb-5">
                 {msg.ownerId !== myId && <AvatarSmallView avatarOwner={currentUser.avaUrl} className="h-fit mt-auto"/>}

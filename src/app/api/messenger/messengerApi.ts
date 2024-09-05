@@ -22,6 +22,21 @@ export const messengerApi = createApi({
       },
       providesTags: ['messenger-remote'],
     }),
+    onReadMessage: builder.mutation<any, any>({
+      query: ({accessToken, body}) => {
+        return {
+          method: 'PUT',
+          url: `/messanger`,
+          body: body,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + accessToken,
+          },
+          credentials: 'include',
+        };
+      },
+      invalidatesTags: ['messenger-remote'],
+    }),
     getMessengerById: builder.query<IMessageType[], {accessToken: string | null, userId: number}>({
       query: ({accessToken, userId}) => {
         return {
@@ -42,4 +57,4 @@ export const messengerApi = createApi({
   }),
 });
 
-export const { useLazyGetMessengerQuery, useLazyGetMessengerByIdQuery } = messengerApi;
+export const { useLazyGetMessengerQuery, useLazyGetMessengerByIdQuery, useOnReadMessageMutation } = messengerApi;
