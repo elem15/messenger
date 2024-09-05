@@ -6,7 +6,6 @@ import { Dispatch } from "react"
 import s from './UStyles.module.scss'
 
 type Props = {
-  // users: IUser[]
   setIsFetchUser: Dispatch<(prev: boolean) => boolean>
   callback: (value: boolean) => void
   setCurrentUser: ({userId, avaUrl, name: {firstName, lastName}}: CurrentUser) => void

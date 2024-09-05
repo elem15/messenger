@@ -23,6 +23,7 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
 
   const [messageIds, setMessageIds] = useState<number[]>([]);
   const [getChangeStatus] = useOnReadMessageMutation()
+
   const lastMessageRef = useRef(null);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
         if (msg.ownerId !== myId && [StatusMessage.RECEIVED, StatusMessage.SENT].includes(msg.status)) {
           acc.push(msg.id);
         }
+
         return acc;
       }, []);
 
@@ -43,9 +45,9 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
   }, [dialogUser])
 
   useEffect(() => {
-    if (messageIds?.length > 0) {
-      getChangeStatus({accessToken, body: {'ids': messageIds}})
-    }
+      if (messageIds?.length > 0) {
+        getChangeStatus({accessToken, body: {'ids': messageIds}})
+      }
   }, [messageIds]);
 
   const setCheckMark = (status: StatusMessage) => {

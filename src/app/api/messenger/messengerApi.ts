@@ -22,7 +22,7 @@ export const messengerApi = createApi({
       },
       providesTags: ['messenger-remote'],
     }),
-    onReadMessage: builder.mutation<any, any>({
+    onReadMessage: builder.mutation<any, {accessToken: string, body: {ids: number[]}}>({
       query: ({accessToken, body}) => {
         return {
           method: 'PUT',

@@ -64,10 +64,8 @@ const Messenger = ({language = 'en'}: Props) => {
       };
 
       //отправка сообщения
-      SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, messageData, (message: IMessageType) => {
-        console.log("STATUS: ", message.status)
-      });
-      setIsFetchUser((prev) => !prev);
+      SocketApi.socket?.emit(WS_EVENT_PATH.RECEIVE_MESSAGE, messageData);
+      setIsFetchUser(prev => !prev)
     } else {
       console.error('WebSocket is not connected');
     }
@@ -97,6 +95,9 @@ const Messenger = ({language = 'en'}: Props) => {
       SocketApi.socket?.on(WS_EVENT_PATH.RECEIVE_MESSAGE, (message: IMessageType) => {
         if (message.status === "RECEIVED") {
           console.log("Your message was received by the recipient:", message);
+          setTimeout(() => {
+            setIsFetchUser(prev => !prev)
+          }, 2000)
         }
       });
 
@@ -168,7 +169,11 @@ const Messenger = ({language = 'en'}: Props) => {
               <div className={currentUser && !isLoadingDialog ? s.afterChange : s.change}>
                 {isLoadingDialog ?
                    setTitle() :
-                  <Dialogs language={language} currentUser={currentUser} dialogUser={dialogUser}/>
+                  <Dialogs
+                    language={language}
+                    currentUser={currentUser}
+                    dialogUser={dialogUser}
+                  />
                 }
               </div>
               {currentUser &&

@@ -49,6 +49,7 @@ export const User = (
     setReceiverId(receiverId)
     setIsFetchUser(prev  => !prev)
     setIsLoadingDialog(true)
+    setCountMessagesNotRead(0)
     setCurrentUser({
       userId: receiverId, 
       avaUrl: avatar[0]?.url, 
