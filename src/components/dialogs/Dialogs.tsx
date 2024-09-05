@@ -22,7 +22,6 @@ export const Dialogs = ({currentUser, dialogUser, language}: Props) => {
   const accessToken = localStorage.getItem('token-remote');
 
   const [messageIds, setMessageIds] = useState<number[]>([]);
-  const [shouldSend, setShouldSend] = useState(false);
   const [getChangeStatus] = useOnReadMessageMutation()
   const lastMessageRef = useRef(null);
 

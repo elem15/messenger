@@ -15,9 +15,7 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en.json'
 import ru from 'javascript-time-ago/locale/ru.json'
 import {useTranslation} from "@/lib/hooks/useTranslation";
-import {string} from "prop-types";
 import {WS_EVENT_PATH} from "@/types/enum";
-import {message} from "memfs/lib/internal/errors";
 
 TimeAgo.addLocale(en)
 TimeAgo.addLocale(ru)
@@ -35,7 +33,6 @@ type Props = {
 const Messenger = ({language = 'en'}: Props) => {
   const { t } = useTranslation(language)
   const accessToken = localStorage.getItem('token-remote');
-  const myId = localStorage.getItem('userId');
 
   const [valueSearch, setValueSearch] = useState<string>('');
   const [receiverId, setReceiverId] = useState<number | null>(null);
