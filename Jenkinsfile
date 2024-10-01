@@ -4,7 +4,8 @@ pipeline {
     agent any
     environment {
         ENV_TYPE = "production"
-        PORT = 3536
+        // PORT = 3536
+        PORT = 3000
         NAMESPACE = "mypicto-ru"
         REGISTRY_HOSTNAME = "elem15ten"
         REGISTRY = "registry.hub.docker.com"
