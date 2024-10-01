@@ -1,22 +1,22 @@
-FROM node:18.15 as dependencies
+FROM node:20.11-alpine as dependencies
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
-RUN  pnpm install
+COPY package*.json ./
+RUN npm install
 
-FROM node:18.15 as builder
+FROM node:20.11-alpine as builder
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-RUN npm install -g pnpm
-RUN pnpm build:production
+RUN npm run build:production
 
-
-# If you are using a custom next.config.js file, uncomment this line.
-FROM nginx:1.15.9-alpine
+FROM node:20.11-alpine as runner
+WORKDIR /app
 ENV NODE_ENV production
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/storybook-static /usr/share/nginx/html
+# If you are using a custom next.config.js file, uncomment this line.
+# COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+# COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 EXPOSE 3000
-CMD ["nginx", "-g", "daemon off;"]
-
+CMD ["npm", "start"]
